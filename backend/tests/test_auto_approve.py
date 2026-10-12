@@ -1,6 +1,8 @@
 from sqlalchemy import select
 
+from app.database import SessionLocal
 from app.models import ApprovalEvent
+from app.services import process_auto_approvals
 from tests.conftest import auth
 
 
@@ -51,3 +53,20 @@ def test_auto_approve_runs_from_content_list(api, db, make_client, make_content)
     items = api.get("/api/content", headers=auth(client_user)).json()
 
     assert next(i for i in items if i["id"] == overdue.id)["status"] == "approved"
+
+
+def test_auto_approve_is_idempotent_across_sessions(db, make_client, make_content):
+    client, _ = make_client(auto_approve_hours=24)
+    overdue = make_content(client, status="client_review", hours_in_status=30)
+
+    # Queues and dashboards evaluate auto-approve on every load, often in parallel.
+    first, second = SessionLocal(), SessionLocal()
+    try:
+        assert process_auto_approvals(first) == 1
+        assert process_auto_approvals(second) == 0
+    finally:
+        first.close()
+        second.close()
+
+    events = db.scalars(select(ApprovalEvent).where(ApprovalEvent.content_id == overdue.id)).all()
+    assert [e.action for e in events] == ["auto_approve"]

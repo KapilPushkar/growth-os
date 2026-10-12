@@ -602,7 +602,7 @@ def _template_summary(client: Client, report: dict[str, Any]) -> dict[str, Any]:
         f"impressions{trend(impressions)} across {highlights.get('posts_published', 0)} published pieces.",
         f"That attention produced {int(leads['current'])} leads{trend(leads)}, "
         f"{highlights.get('meetings_booked', 0)} meetings and {highlights.get('deals_won', 0)} won deal(s)"
-        + (f" worth {highlights.get('won_value', 0):,.0f}." if highlights.get("won_value") else "."),
+        + (f" worth ${highlights.get('won_value', 0):,.0f}." if highlights.get("won_value") else "."),
     ]
     top = (report.get("top_content") or [None])[0]
     if top:

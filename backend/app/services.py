@@ -9,7 +9,7 @@ import random
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 
-from sqlalchemy import func, select
+from sqlalchemy import func, select, update
 from sqlalchemy.orm import Session
 
 from app.auth import generate_temp_password, hash_password
@@ -185,8 +185,15 @@ def process_auto_approvals(db: Session, client_id: int | None = None) -> int:
     for piece, hours in db.execute(query).all():
         if piece.status_changed_at > now - timedelta(hours=hours):
             continue
-        piece.status = "approved"
-        piece.status_changed_at = now
+        # Conditional update: when two requests evaluate the queue at once,
+        # only the one that actually flips the row records the event.
+        flipped = db.execute(
+            update(ContentPiece)
+            .where(ContentPiece.id == piece.id, ContentPiece.status == "client_review")
+            .values(status="approved", status_changed_at=now)
+        ).rowcount
+        if flipped != 1:
+            continue
         record_event(
             db,
             piece,

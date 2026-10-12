@@ -37,7 +37,7 @@ from app.models import (
 from app.post_templates import FRAMEWORKS, build_post
 
 TEAM = (
-    ("admin@growthos.dev", "Growth OS Admin", "admin", "admin123"),
+    ("admin@growthos.dev", "Rhea Sen", "admin", "admin123"),
     ("priya@growthos.dev", "Priya Sharma", "strategist", "team123"),
     ("arjun@growthos.dev", "Arjun Nair", "strategist", "team123"),
 )
