@@ -1,0 +1,25 @@
+.app {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 48px 16px;
+}
+
+.health {
+  margin-top: 24px;
+  padding: 16px 20px;
+  border: 1px solid #d0d7de;
+  border-radius: 8px;
+}
+
+.health h2 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+}
+
+.ok {
+  color: #1a7f37;
+}
+
+.error {
+  color: #cf222e;
+}
