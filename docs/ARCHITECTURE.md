@@ -128,10 +128,14 @@ erDiagram
   CLIENT {
     int id
     string name "founder / exec"
+    string title
+    string email
     string company
     string industry
+    string website
     string plan
     string status "onboarding|active|paused"
+    text positioning
     text brand_voice
     json tone_tags
     text target_audience
@@ -142,6 +146,8 @@ erDiagram
     int posting_cadence "posts/week"
     int auto_approve_hours "0 = off"
     json onboarding "step -> done"
+    int account_manager_id "plain int, no FK"
+    date start_date "set when onboarding completes"
   }
   USER {
     int id
@@ -151,6 +157,7 @@ erDiagram
   }
   CONTENT {
     int id
+    string title
     string channel "linkedin|x|blog|newsletter|instagram"
     string format "post|carousel|article|thread|video_script"
     string pillar
@@ -158,9 +165,11 @@ erDiagram
     json hashtags
     string target_keyword
     string status
+    datetime status_changed_at "drives wait times + auto-approve"
     datetime scheduled_at
     datetime published_at
     bool ai_generated
+    string ai_source "llm:<provider>|template"
     int impressions
     int engagements
     int clicks
@@ -181,11 +190,14 @@ erDiagram
   }
   LEAD {
     string name
+    string title
     string company
     string source
     string stage
     int score
     float deal_value
+    text notes
+    datetime stage_changed_at
   }
   KEYWORD {
     string keyword
@@ -202,16 +214,25 @@ erDiagram
     bool mentioned
     int position
     string method "live|simulated"
+    text excerpt
   }
   METRIC_SNAPSHOT {
     date week_start
     int followers
     int impressions
     int engagements
+    int profile_views
     int website_visits
     int leads
     int meetings
     float ai_visibility
+  }
+  ACTIVITY {
+    int client_id
+    int user_id "null = system"
+    string kind
+    text message
+    datetime created_at
   }
 ```
 
