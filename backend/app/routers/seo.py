@@ -4,13 +4,14 @@ from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from app.analytics import geo_overview
+from app import ai
+from app.analytics import geo_by_engine, geo_overview
 from app.auth import get_current_user, require_team, scope_client_id
 from app.database import get_db
-from app.models import Keyword, User
+from app.models import GeoCheck, Keyword, MetricSnapshot, User
 from app.routers.common import load_client, load_owned
-from app.schemas import ClientRef, KeywordBulk, KeywordCreate, KeywordItem
-from app.serializers import keyword_out
+from app.schemas import ClientRef, GeoRunIn, KeywordBulk, KeywordCreate, KeywordItem
+from app.serializers import geo_out, keyword_out
 from app.services import log_activity, simulate_rank_refresh
 
 keywords_router = APIRouter(prefix="/keywords", tags=["seo"])
@@ -125,3 +126,38 @@ def list_geo(
         raise HTTPException(status.HTTP_400_BAD_REQUEST, "client_id is required")
     load_client(db, user, client_id)
     return geo_overview(db, client_id)
+
+
+@geo_router.post("/run")
+def run_geo(body: GeoRunIn, user: User = Depends(require_team), db: Session = Depends(get_db)) -> dict:
+    client = load_client(db, user, body.client_id)
+    latest = db.scalar(
+        select(MetricSnapshot.ai_visibility)
+        .where(MetricSnapshot.client_id == client.id)
+        .order_by(MetricSnapshot.week_start.desc())
+        .limit(1)
+    )
+    checks = []
+    for engine in body.engines:
+        result, _source = ai.geo_check(client, body.prompt, engine, latest or 0.0)
+        check = GeoCheck(client_id=client.id, prompt=body.prompt, engine=engine, **result)
+        db.add(check)
+        checks.append(check)
+    live = sum(1 for c in checks if c.method == "live")
+    log_activity(
+        db,
+        client.id,
+        user,
+        "geo.run",
+        f"GEO check run for {client.name} across {len(checks)} engine(s): "
+        f"mentioned by {sum(1 for c in checks if c.mentioned)}",
+    )
+    db.commit()
+    return {
+        "checks": [geo_out(c) for c in checks],
+        "by_engine": geo_by_engine(checks),
+        "note": (
+            f"{live} live and {len(checks) - live} simulated check(s). Engines are live only "
+            "when the matching provider key is configured (claude: Anthropic, chatgpt: OpenAI)."
+        ),
+    }

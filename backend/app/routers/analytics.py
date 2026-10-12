@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
-from app import analytics
+from app import ai, analytics
 from app.auth import get_current_user, require_team
 from app.database import get_db
 from app.models import User
@@ -31,4 +31,7 @@ def report(
     user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> dict:
-    return analytics.report(db, load_client(db, user, client_id), days)
+    client = load_client(db, user, client_id)
+    data = analytics.report(db, client, days)
+    summary, source = ai.report_summary(client, data)
+    return {**data, **summary, "summary_source": source}

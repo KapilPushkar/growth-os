@@ -36,3 +36,14 @@ Choices made where the brief or ARCHITECTURE.md left something open. One line ea
 - Services raise domain errors (400/403/404/409) that `main.py` turns into JSON responses, so `services.py` has no FastAPI dependency.
 - Read-side computations live in `analytics.py`, separate from the write rules in `services.py`.
 - Creating a lead from a post increments that post's `leads_generated`.
+
+## AI layer
+- `ANTHROPIC_MODEL` defaults to `claude-opus-5-5`; `AI_EFFORT` (default `low`) sets Anthropic reasoning effort so interactive generation stays fast.
+- Anthropic requests opt into server-side refusal fallbacks (`fallbacks: "default"`); a `refusal` stop reason, like any other failure, falls back to templates.
+- Every AI function catches all exceptions and falls back to templates, so no AI endpoint can return a 500.
+- Template output is deterministic per client, day and request, so demos are repeatable but drafts change day to day.
+- Live GEO checks map `claude` to Anthropic and `chatgpt` to OpenAI; `gemini` and `perplexity` are always simulated, weighted by the client's latest AI-visibility snapshot.
+- GEO checks ask the buyer's question without the brand brief (the point is to see if the assistant names the client unprompted).
+- AI keyword ideas are suggestions only; the team adds them with `POST /keywords/bulk`. Volumes from templates are labelled as estimates.
+- Repurposing creates a new draft linked to the same campaign and keyword; the original is unchanged.
+- Report summaries return `summary`, `next_steps` and `summary_source` alongside the report data.

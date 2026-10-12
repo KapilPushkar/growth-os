@@ -25,10 +25,12 @@ class Settings:
     jwt_secret: str = os.getenv("JWT_SECRET", "dev-only-insecure-jwt-secret-change-me")
     jwt_expire_minutes: int = _int("JWT_EXPIRE_MINUTES", 60 * 12)
     anthropic_api_key: str = os.getenv("ANTHROPIC_API_KEY", "")
-    anthropic_model: str = os.getenv("ANTHROPIC_MODEL", "claude-sonnet-5-5")
+    anthropic_model: str = os.getenv("ANTHROPIC_MODEL", "claude-opus-5-5")
     openai_api_key: str = os.getenv("OPENAI_API_KEY", "")
     openai_model: str = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
-    ai_timeout_seconds: int = _int("AI_TIMEOUT_SECONDS", 30)
+    ai_timeout_seconds: int = _int("AI_TIMEOUT_SECONDS", 60)
+    # Anthropic reasoning effort: low keeps interactive generation fast.
+    ai_effort: str = os.getenv("AI_EFFORT", "low")
     cors_origins: list[str] = field(
         default_factory=lambda: _split_csv(os.getenv("CORS_ORIGINS", "http://localhost:5173"))
     )

@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 
 from app.config import FRONTEND_DIST, settings
 from app.database import get_db, init_db
-from app.routers import analytics, auth, campaigns, clients, content, leads, seo
+from app.routers import ai, analytics, auth, campaigns, clients, content, leads, seo
 from app.services import DomainError
 
 
@@ -47,6 +47,7 @@ for module_router in (
     seo.keywords_router,
     seo.geo_router,
     analytics.router,
+    ai.router,
 ):
     app.include_router(module_router, prefix=API_PREFIX)
 

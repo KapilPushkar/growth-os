@@ -286,6 +286,8 @@ One module (`app/ai.py`) owns all prompting:
 - Responses are requested as JSON and parsed defensively; any failure (no key, timeout, quota, bad JSON) falls back to templates built from the same brand data. The UI shows a badge saying which was used.
 - Capabilities: post drafts per channel rules, trending topics with *why now*, keyword ideas, repurposing, outreach messages, report executive summary, live GEO check (asks the LLM the buyer's question and checks whether the client is named).
 - Humans stay in the loop: AI output always lands as a `draft` and must pass the approval layer.
+- Live GEO checks run only for the engine that matches the configured key (`claude` → Anthropic, `chatgpt` → OpenAI); other engines are simulated and labelled `method: simulated`.
+- `GET /ai/status` reports `{provider, model, mode}` so the UI can show whether real generation is on.
 
 ## 9. Impact measurement
 
