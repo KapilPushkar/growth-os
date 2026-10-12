@@ -19,9 +19,23 @@ def _int(name: str, default: int) -> int:
     return int(raw) if raw else default
 
 
+def _database_url() -> str:
+    """Resolve relative SQLite paths against backend/, not the current directory.
+
+    Otherwise running the seed and the server from different folders would
+    silently use two different database files.
+    """
+    url = os.getenv("DATABASE_URL", "sqlite:///./growth_os.db")
+    prefix = "sqlite:///"
+    path = url.removeprefix(prefix)
+    if url.startswith(prefix) and path != ":memory:" and not Path(path).is_absolute():
+        return f"{prefix}{(BACKEND_DIR / path).resolve().as_posix()}"
+    return url
+
+
 @dataclass(frozen=True)
 class Settings:
-    database_url: str = os.getenv("DATABASE_URL", "sqlite:///./growth_os.db")
+    database_url: str = field(default_factory=_database_url)
     jwt_secret: str = os.getenv("JWT_SECRET", "dev-only-insecure-jwt-secret-change-me")
     jwt_expire_minutes: int = _int("JWT_EXPIRE_MINUTES", 60 * 12)
     anthropic_api_key: str = os.getenv("ANTHROPIC_API_KEY", "")

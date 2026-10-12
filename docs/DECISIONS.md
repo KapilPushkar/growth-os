@@ -65,3 +65,8 @@ Choices made where the brief or ARCHITECTURE.md left something open. One line ea
 
 ## Concurrency
 - Auto-approve uses a conditional `UPDATE … WHERE status = 'client_review'`, so parallel page loads record exactly one approval event.
+
+## Operations
+- Relative SQLite paths in `DATABASE_URL` resolve against `backend/`, so the seed and the server always share one database file regardless of the working directory.
+- `scripts/smoke_test.py` uses only httpx (already a backend dependency), creates its own client so it can run repeatedly, and exits non-zero on any failure.
+- README screenshots are captured from the seeded demo at 1440×900.
