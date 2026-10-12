@@ -619,7 +619,11 @@ def _template_summary(client: Client, report: dict[str, Any]) -> dict[str, Any]:
         steps.append(f"Publish a deeper article on “{movers[0]['keyword']}” to push it further up the rankings.")
     if (visibility.get("current") or 0) < 40:
         steps.append("Raise AI-assistant visibility: answer the top buyer questions on the website and earn citations from industry lists.")
-    steps.append("Turn this month's engaged leads into meetings with a personal follow-up sequence from the founder.")
+    steps += [
+        "Turn this month's engaged leads into meetings with a personal follow-up sequence from the founder.",
+        f"Batch-approve next month's calendar early so {client.name} keeps a steady posting cadence.",
+        "Repurpose the best-performing post into a newsletter issue and a short thread.",
+    ]
     return {"summary": " ".join(parts), "next_steps": steps[:3]}
 
 
