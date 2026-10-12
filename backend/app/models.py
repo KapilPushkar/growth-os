@@ -63,6 +63,22 @@ ONBOARDING_LABELS = {
 }
 
 
+# How each content action reads in the activity feed: "<user> <verb> “<title>”".
+ACTION_VERBS = {
+    "create": "created",
+    "submit": "submitted for internal review",
+    "send_to_client": "sent to the client for approval",
+    "reject_internal": "returned to draft",
+    "approve": "approved",
+    "auto_approve": "auto-approved",
+    "request_changes": "requested changes on",
+    "revise": "moved back to draft",
+    "schedule": "scheduled",
+    "publish": "published",
+    "comment": "commented on",
+}
+
+
 def utcnow() -> datetime:
     return datetime.now(UTC).replace(tzinfo=None)
 

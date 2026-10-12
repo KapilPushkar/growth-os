@@ -16,3 +16,10 @@ Choices made where the brief or ARCHITECTURE.md left something open. One line ea
 - `pytest` lives in `backend/requirements-dev.txt` so production installs stay lean.
 - Frontend runtime dependencies are only `react` and `react-dom`; the Vite template's dev tooling (`@vitejs/plugin-react`, `@types/*`, `oxlint`) is kept for building and linting.
 - The default dev `JWT_SECRET` is 32+ bytes so PyJWT does not warn; it must still be replaced outside local dev.
+
+## Seed data
+- Seed dates are relative to the moment it runs, so the demo always looks current; randomness uses a fixed seed (42) so data shapes are repeatable.
+- Fictional companies use the reserved `.example` domain; prospects and clients are invented names.
+- Onboarding clients with 3+ steps done get a "first batch" of three pieces (draft, internal review, client review); earlier ones have no content yet.
+- LedgerLoop (client1) has 48h auto-approve on and one piece waiting 60h, so auto-approve fires the first time a queue or dashboard loads.
+- Seed post bodies come from the same frameworks as the AI template fallback (`app/post_templates.py`), so seeded and generated drafts read consistently.
