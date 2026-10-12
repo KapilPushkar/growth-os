@@ -1,46 +1,89 @@
-import { useEffect, useState } from 'react'
-import './App.css'
+import { useEffect } from 'react'
+import { AuthProvider } from './components/AuthProvider'
+import { Layout } from './components/Layout'
+import { MonthCalendar } from './components/MonthCalendar'
+import { ReportView } from './components/ReportView'
+import { ToastProvider } from './components/ToastProvider'
+import { Empty, Link, Loading, PageHeader } from './components/ui'
+import { isTeam, useAuth } from './lib/auth'
+import { matchPath, navigate, useLocation } from './lib/router'
+import type { Me } from './lib/types'
+import { ClientApprovals } from './pages/client/ClientApprovals'
+import { ClientLeads } from './pages/client/ClientLeads'
+import { ClientHome } from './pages/client/Home'
+import { Preferences } from './pages/client/Preferences'
+import { Login } from './pages/Login'
+import { Approvals } from './pages/team/Approvals'
+import { Calendar } from './pages/team/Calendar'
+import { ClientWorkspace } from './pages/team/ClientWorkspace'
+import { Clients } from './pages/team/Clients'
+import { Dashboard } from './pages/team/Dashboard'
+import { Leads } from './pages/team/Leads'
 
-type Health = { status: string; db: string }
-
-type HealthState =
-  | { kind: 'loading' }
-  | { kind: 'ok'; health: Health }
-  | { kind: 'error'; message: string }
-
-function App() {
-  const [state, setState] = useState<HealthState>({ kind: 'loading' })
-
-  useEffect(() => {
-    fetch('/api/health')
-      .then(async (res) => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`)
-        setState({ kind: 'ok', health: (await res.json()) as Health })
-      })
-      .catch((err: unknown) => {
-        setState({ kind: 'error', message: err instanceof Error ? err.message : String(err) })
-      })
-  }, [])
-
+export default function App() {
   return (
-    <main className="app">
-      <h1>Growth OS</h1>
-      <section className="health">
-        <h2>API health</h2>
-        {state.kind === 'loading' && <p>Checking…</p>}
-        {state.kind === 'ok' && (
-          <p className="ok">
-            status: <strong>{state.health.status}</strong> · db: <strong>{state.health.db}</strong>
-          </p>
-        )}
-        {state.kind === 'error' && (
-          <p className="error">
-            Backend unreachable ({state.message}). Is uvicorn running on port 8000?
-          </p>
-        )}
-      </section>
-    </main>
+    <ToastProvider>
+      <AuthProvider>
+        <Root />
+      </AuthProvider>
+    </ToastProvider>
   )
 }
 
-export default App
+function Root() {
+  const { user, ready } = useAuth()
+  const { path } = useLocation()
+
+  useEffect(() => {
+    if (ready && user && path === '/login') navigate('/')
+  }, [ready, user, path])
+
+  if (!ready) return <Loading label="Starting Growth OS…" />
+  if (!user) return <Login />
+  return (
+    <Layout>
+      <Page user={user} path={path} />
+    </Layout>
+  )
+}
+
+function Page({ user, path }: { user: Me; path: string }) {
+  if (isTeam(user)) {
+    if (path === '/' || path === '/login') return <Dashboard />
+    if (path === '/clients') return <Clients />
+    const workspace = matchPath('/clients/:id/:tab?', path)
+    if (workspace && /^\d+$/.test(workspace.id)) {
+      return <ClientWorkspace key={workspace.id} clientId={Number(workspace.id)} tab={workspace.tab ?? ''} />
+    }
+    if (path === '/approvals') return <Approvals />
+    if (path === '/calendar') return <Calendar />
+    if (path === '/leads') return <Leads />
+    return <NotFound />
+  }
+
+  const clientId = user.client_id!
+  if (path === '/' || path === '/login') return <ClientHome />
+  if (path === '/approvals') return <ClientApprovals />
+  if (path === '/calendar') {
+    return (
+      <>
+        <PageHeader eyebrow="Calendar" title="What's going out" description="Your scheduled and published posts." />
+        <MonthCalendar clientId={clientId} />
+      </>
+    )
+  }
+  if (path === '/leads') return <ClientLeads />
+  if (path === '/report') return <ReportView clientId={clientId} />
+  if (path === '/preferences') return <Preferences />
+  return <NotFound />
+}
+
+function NotFound() {
+  return (
+    <div className="card">
+      <Empty title="Page not found" action={<Link to="/">Go home</Link>}>
+        That link does not match anything in Growth OS.
+      </Empty>
+    </div>
+  )
+}

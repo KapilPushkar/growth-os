@@ -47,3 +47,21 @@ Choices made where the brief or ARCHITECTURE.md left something open. One line ea
 - AI keyword ideas are suggestions only; the team adds them with `POST /keywords/bulk`. Volumes from templates are labelled as estimates.
 - Repurposing creates a new draft linked to the same campaign and keyword; the original is unchanged.
 - Report summaries return `summary`, `next_steps` and `summary_source` alongside the report data.
+
+## Frontend
+- Shared plumbing lives in `src/lib/` (`api.ts`, `router.ts`, `types.ts`, `format.ts`, `useApi.ts`, contexts); UI pieces in `src/components/`, screens in `src/pages/`.
+- Hash routing (`#/clients/3/content`), so any static host or the FastAPI SPA fallback serves every route; the fallback refuses paths outside `frontend/dist`.
+- TypeScript `strict` mode is on; lint (oxlint) runs with zero warnings.
+- `useApi` keeps the previous data visible while a new request loads and drops responses from superseded requests.
+- Line charts measure their container (ResizeObserver) so labels stay a constant size; axes round up to a nice maximum.
+- One accent colour (deep green) with warm neutrals; Inter for UI and Fraunces for headings via Google Fonts, falling back to system fonts offline.
+- Status and stage colours are defined once in `lib/format.ts` and used by every badge, board and calendar.
+- The sidebar approvals badge counts what the viewer must act on: internal review for the team, posts awaiting approval for clients.
+- Lead stages change from the lead drawer rather than drag-and-drop on the board; clients can edit lead notes only.
+- "Approve all" asks for confirmation and reports any items that could not be approved.
+- Blog and newsletter previews render Markdown headings and the subject line; social posts render as plain text like the real feed.
+- The calendar shows scheduled and published pieces (approved pieces have no date yet).
+- The seeded admin is a named person (Rhea Sen) so greetings read naturally.
+
+## Concurrency
+- Auto-approve uses a conditional `UPDATE … WHERE status = 'client_review'`, so parallel page loads record exactly one approval event.

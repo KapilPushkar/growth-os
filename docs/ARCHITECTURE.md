@@ -329,10 +329,9 @@ growth-os/
 │   └── .env.example
 ├── frontend/
 │   ├── src/
-│   │   ├── api.ts             # typed fetch client
-│   │   ├── router.tsx         # hash router
-│   │   ├── components/        # charts, badges, modals, layout
-│   │   └── pages/             # team console + client portal pages
+│   │   ├── lib/               # api.ts (typed fetch client), router.ts (hash router), types, formatters
+│   │   ├── components/        # charts, badges, drawers, layout, content editor, report
+│   │   └── pages/             # team/ console + client/ portal pages
 │   ├── package.json
 │   └── vite.config.ts         # proxies /api -> :8000
 ├── docs/ARCHITECTURE.md
