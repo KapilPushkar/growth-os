@@ -83,6 +83,13 @@ def utcnow() -> datetime:
     return datetime.now(UTC).replace(tzinfo=None)
 
 
+def to_naive_utc(value: datetime | None) -> datetime | None:
+    """Normalise an incoming datetime to the naive-UTC form stored in the DB."""
+    if value is None or value.tzinfo is None:
+        return value
+    return value.astimezone(UTC).replace(tzinfo=None)
+
+
 def empty_onboarding() -> dict[str, bool]:
     return {step: False for step in ONBOARDING_STEPS}
 

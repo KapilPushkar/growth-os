@@ -241,7 +241,7 @@ erDiagram
 ```mermaid
 stateDiagram-v2
   [*] --> idea
-  idea --> draft
+  idea --> draft: revise (team)
   draft --> internal_review: submit (team)
   internal_review --> draft: return (team)
   internal_review --> client_review: send to client (team)
@@ -251,6 +251,7 @@ stateDiagram-v2
   client_review --> changes_requested: request changes + note
   changes_requested --> draft: revise (team)
   approved --> scheduled: schedule (team, needs date)
+  scheduled --> scheduled: reschedule (team)
   approved --> published: publish
   scheduled --> published: publish
   scheduled --> changes_requested: client pulls it back
@@ -317,9 +318,11 @@ growth-os/
 │   │   ├── serializers.py     # model -> JSON
 │   │   ├── auth.py            # JWT, hashing, RBAC helpers
 │   │   ├── services.py        # approval state machine, auto-approve, activity
+│   │   ├── analytics.py       # dashboard, impact and report computations
 │   │   ├── ai.py              # LLM + template fallback
+│   │   ├── post_templates.py  # deterministic post frameworks (seed + AI fallback)
 │   │   ├── seed.py            # 12 demo clients + team + history
-│   │   └── routers/           # auth, clients, content, campaigns, leads, seo, ai, analytics
+│   │   └── routers/           # auth, clients, content (+approvals), campaigns, leads, seo (+geo), ai, analytics
 │   ├── requirements.txt
 │   └── .env.example
 ├── frontend/

@@ -23,3 +23,16 @@ Choices made where the brief or ARCHITECTURE.md left something open. One line ea
 - Onboarding clients with 3+ steps done get a "first batch" of three pieces (draft, internal review, client review); earlier ones have no content yet.
 - LedgerLoop (client1) has 48h auto-approve on and one piece waiting 60h, so auto-approve fires the first time a queue or dashboard loads.
 - Seed post bodies come from the same frameworks as the AI template fallback (`app/post_templates.py`), so seeded and generated drafts read consistently.
+
+## Workflow and API
+- `revise` also moves an `idea` to `draft` (the doc's idea → draft edge had no named action).
+- `schedule` is allowed from `scheduled` too, so a slot can be moved; `request_changes` on a scheduled piece clears its date.
+- Clients get 404 (not 403) for their own internal drafts: they should not learn those exist.
+- Clients also see their `changes_requested` items in the approvals inbox, read-only, so they know what is being revised.
+- Clients may edit only voice, tone, audience, pillars, topics to avoid, goals and auto-approve hours; on leads only notes.
+- A piece counts as "stuck" for the health score after 48h in `client_review`.
+- "Posts published this week" on the dashboard means the last 7 days, not since Monday.
+- Report periods use weekly snapshots: `weeks = round(days / 7)`, compared with the same number of weeks before.
+- Services raise domain errors (400/403/404/409) that `main.py` turns into JSON responses, so `services.py` has no FastAPI dependency.
+- Read-side computations live in `analytics.py`, separate from the write rules in `services.py`.
+- Creating a lead from a post increments that post's `leads_generated`.

@@ -574,7 +574,8 @@ class _Seeder:
             if channel == "blog":
                 campaign = campaigns["performance"]
             elif channel == "linkedin":
-                campaign = campaigns["personal_brand" if index % 2 else "content"]
+                rotation = index // len(client.channels)
+                campaign = campaigns["personal_brand" if rotation % 2 else "content"]
             else:
                 campaign = campaigns["content"]
 

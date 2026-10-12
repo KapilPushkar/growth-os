@@ -1,6 +1,6 @@
 from contextlib import asynccontextmanager
 
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from sqlalchemy import text
@@ -9,7 +9,8 @@ from sqlalchemy.orm import Session
 
 from app.config import FRONTEND_DIST, settings
 from app.database import get_db, init_db
-from app.routers import auth
+from app.routers import analytics, auth, campaigns, clients, content, leads, seo
+from app.services import DomainError
 
 
 @asynccontextmanager
@@ -28,8 +29,25 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+@app.exception_handler(DomainError)
+async def domain_error_handler(_request: Request, exc: DomainError) -> JSONResponse:
+    return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
+
+
 API_PREFIX = "/api"
-for module_router in (auth.router, auth.users_router):
+for module_router in (
+    auth.router,
+    auth.users_router,
+    clients.router,
+    content.router,
+    content.approvals_router,
+    campaigns.router,
+    leads.router,
+    seo.keywords_router,
+    seo.geo_router,
+    analytics.router,
+):
     app.include_router(module_router, prefix=API_PREFIX)
 
 
