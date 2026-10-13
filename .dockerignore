@@ -1,0 +1,12 @@
+.git
+.github
+.devcontainer
+docs
+scripts
+**/node_modules
+**/.venv
+**/__pycache__
+**/.pytest_cache
+**/*.db
+**/.env
+frontend/dist

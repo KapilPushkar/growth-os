@@ -7,12 +7,21 @@ One app serves both sides:
 - **Team console**: strategists onboard clients, draft content with AI in each client's voice, run the approval workflow, manage campaigns and leads, track SEO and AI-assistant visibility, and send monthly reports.
 - **Client portal**: founders see what needs their approval, approve or request changes in a couple of clicks, and follow results.
 
+> ### ▶ [Take the product tour](https://kapilpushkar.github.io/growth-os/tour/)
+> The full flow in 30 screens: onboarding a client, AI drafts in their voice, client approval, publishing, leads, SEO/GEO, impact and the monthly report. It ends with the system architecture.
+>
+> **Try it live without installing anything:** [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/KapilPushkar/growth-os?quickstart=1). The app opens in your browser in about 3 minutes, with demo data loaded. See [Try it without a local setup](#try-it-without-a-local-setup).
+>
+> Demo logins: **agency** `admin@growthos.dev` / `admin123` · **client** `client1@growthos.dev` / `client123`
+
 ![Agency dashboard](docs/screenshots/dashboard.png)
 
 ## Contents
 
 - [Features](#features)
+- [Try it without a local setup](#try-it-without-a-local-setup)
 - [Quick start](#quick-start)
+- [Using Growth OS to grow a business](#using-growth-os-to-grow-a-business)
 - [Demo credentials](#demo-credentials)
 - [5-minute demo walkthrough](#5-minute-demo-walkthrough)
 - [Turning on real AI](#turning-on-real-ai)
@@ -65,6 +74,17 @@ Tenant isolation is enforced on the server: every client-scoped route checks acc
 | AI | Anthropic Messages API or OpenAI via httpx, with deterministic templates when no key is set |
 | Frontend | React 19, TypeScript, Vite. No router or chart libraries: a small hash router and hand-built SVG charts |
 | Tests | pytest with FastAPI's TestClient; an end-to-end API smoke test |
+
+## Try it without a local setup
+
+| Option | What you need | Steps |
+| --- | --- | --- |
+| **Product tour** | A browser | Open the [product tour](https://kapilpushkar.github.io/growth-os/tour/): every screen of the flow, plus the architecture. |
+| **GitHub Codespaces** (recommended) | A free GitHub account | Click [Open in Codespaces](https://codespaces.new/KapilPushkar/growth-os?quickstart=1), then **Create codespace**. Setup installs everything, loads demo data and starts the app (about 3 minutes). It opens in a new tab; if not, open the **Ports** tab and click the globe next to port **8000**. Sign in with the demo logins. |
+| **Docker** | [Docker Desktop](https://www.docker.com/products/docker-desktop/) (Windows or Mac) | `git clone https://github.com/KapilPushkar/growth-os.git`, `cd growth-os`, `docker compose up --build`, then open http://localhost:8000. No Python or Node needed. |
+| **Hosted demo** | A [Render](https://render.com) account | **New + → Blueprint**, pick this repo. `render.yaml` builds the Docker image and gives you a public URL; the free plan sleeps when idle and reloads demo data on start. |
+
+Codespaces and Docker reload fresh demo data on every start, so feel free to click everything.
 
 ## Quick start
 
@@ -125,6 +145,19 @@ cd backend && uvicorn app.main:app --port 8000
 ```
 
 FastAPI serves the built app from `frontend/dist` at http://localhost:8000, with a fallback to `index.html` for client-side routes.
+
+## Using Growth OS to grow a business
+
+Growth OS runs a weekly loop: the agency does the work, the founder approves in minutes, and results feed the next week's plan.
+
+1. **Capture the founder's voice once.** In **Clients → New client**, fill in positioning, voice, audience, 3-4 content pillars, goals and topics to avoid. Every AI draft, outreach message and report summary is written from this brief, so the more specific it is, the more each post sounds like the founder.
+2. **Onboard in a week.** Work through the five-step checklist: intake, account access, strategy, first batch approved, go live. The dashboard's onboarding pipeline shows who is stuck where.
+3. **Plan from what's timely.** In the client's **Content** tab, start from **trending topics** (each with the founder's angle and why it matters now), then generate drafts per pillar and channel. Group work into **campaigns** with KPI targets so every post has a job.
+4. **Make approval effortless.** Send batches to the client. Founders approve from the portal or their phone, with posts previewed as they will appear, or request changes with a note. Turn on **auto-approve** (24-72h) for busy founders so the calendar never stalls.
+5. **Publish on a cadence.** Schedule approved posts on the **calendar**. The client's health score drops when cadence slips or approvals get stuck, which tells the team where to step in.
+6. **Turn attention into pipeline.** Log leads from posts, inbound, outbound and referrals; move them through the pipeline and use **AI outreach** for connection notes, follow-ups and meeting requests.
+7. **Own search and AI answers.** Track buying-intent **keywords**, add AI suggestions, and run **GEO checks** to see whether ChatGPT, Perplexity, Gemini and Claude name the client when buyers ask. Turn the gaps into articles.
+8. **Prove impact every month.** The **Overview** compares the last four weeks with the four before; the **Report** gives the founder KPIs, an executive summary and three next steps. Save it as PDF and use the next steps to plan the coming month.
 
 ## Demo credentials
 

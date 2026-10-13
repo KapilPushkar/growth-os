@@ -1,0 +1,13 @@
+services:
+  growth-os:
+    build: .
+    image: growth-os:latest
+    ports:
+      - "8000:8000"
+    environment:
+      # Fresh demo data on every start. Set to "0" to keep changes between restarts.
+      SEED_ON_START: "1"
+      # Optional: real AI instead of templates. Export the key in your shell first.
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      JWT_SECRET: ${JWT_SECRET:-local-docker-demo-secret-change-me-please}

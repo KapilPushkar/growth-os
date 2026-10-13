@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Growth OS product tour: the full agency and client flow, then the architecture.">
+<title>Growth OS Tour</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;500;600&display=swap">
+<style>
+/* Layout: a single reading column of numbered steps (the order is the real workflow), then the architecture. */
+:root {
+  --bg: #f5f4f0; --surface: #ffffff; --fg: #1b1a17; --muted: #5d5850; --line: #e2ded5;
+  --accent: #0f6b55; --accent-soft: #e2f0eb; --ink: #12201b;
+  --display: 'Fraunces', Georgia, serif; --body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #111815; --surface: #18221e; --fg: #e9eee9; --muted: #a3b0a9; --line: #2a3832;
+  --accent: #4cc39d; --accent-soft: #1d332b; --ink: #0b1310; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #111815; --surface: #18221e; --fg: #e9eee9; --muted: #a3b0a9; --line: #2a3832;
+  --accent: #4cc39d; --accent-soft: #1d332b; --ink: #0b1310; color-scheme: dark }
+* { box-sizing: border-box }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 var(--body); padding-inline: 16px; }
+.wrap { max-width: 1040px; margin: 0 auto; padding-block: 48px 80px; }
+h1, h2 { font-family: var(--display); font-weight: 600; line-height: 1.15; text-wrap: balance; margin: 0 }
+h1 { font-size: clamp(32px, 5vw, 48px) }
+h2 { font-size: 28px; margin-bottom: 8px }
+h3 { margin: 0; font-size: 18px }
+p { margin: 0; max-width: 68ch }
+a { color: var(--accent) }
+.lede { font-size: 19px; color: var(--muted); margin-top: 14px }
+.eyebrow { font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--accent) }
+header.top { display: grid; gap: 18px; padding-bottom: 32px; border-bottom: 1px solid var(--line) }
+.chips { display: flex; flex-wrap: wrap; gap: 8px }
+.chip { font-size: 13px; padding: 4px 10px; border-radius: 999px; background: var(--accent-soft); color: var(--fg) }
+.creds { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-top: 4px }
+.cred { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; font-size: 14px }
+.cred code { font-size: 13px }
+nav.toc { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 14px; padding: 18px 0; border-bottom: 1px solid var(--line) }
+section.act { padding-top: 44px; display: grid; gap: 22px }
+.act > p { color: var(--muted) }
+.step { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 14px; align-items: start }
+.num { font-family: var(--display); font-size: 22px; color: var(--accent); line-height: 1.2; font-variant-numeric: tabular-nums }
+.step-body { display: grid; gap: 10px; min-width: 0 }
+.step-body p { color: var(--muted) }
+figure { margin: 0 }
+.shot { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface) }
+.pair { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 14px; align-items: start }
+.pair .shot.phone { max-width: 260px }
+.role { font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 6px; background: var(--ink); color: #fff; justify-self: start }
+.role.client { background: var(--accent); color: #fff }
+.arch { display: grid; gap: 28px; padding-top: 52px }
+.diagram { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px; overflow-x: auto }
+.diagram svg { display: block; width: 100%; min-width: 720px; height: auto; color: var(--fg) }
+figcaption { font-size: 14px; color: var(--muted); margin-top: 10px }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; display: grid; gap: 6px }
+.card p { font-size: 15px; color: var(--muted) }
+footer { margin-top: 56px; padding-top: 20px; border-top: 1px solid var(--line); font-size: 14px; color: var(--muted) }
+@media (max-width: 720px) { .pair { grid-template-columns: 1fr } .step { grid-template-columns: 1fr } .num { font-size: 18px } }
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <span class="eyebrow">Product tour</span>
+    <h1>Growth OS</h1>
+    <p class="lede">A portal for a done-for-you growth agency. The team runs content, personal branding, lead generation and SEO/GEO for busy founders. Founders only approve and see results. This tour follows one client from first intake to published post, leads and a monthly report, then shows how the system is built.</p>
+    <div class="chips">
+      <span class="chip">Team console</span><span class="chip">Client portal</span><span class="chip">AI drafts in the client's voice</span>
+      <span class="chip">Approval workflow</span><span class="chip">Leads</span><span class="chip">SEO + AI-assistant visibility</span><span class="chip">Impact reports</span>
+    </div>
+    <div class="creds">
+      <div class="cred"><strong>Try it yourself</strong><br>Source and setup: <a href="https://github.com/KapilPushkar/growth-os">github.com/KapilPushkar/growth-os</a></div>
+      <div class="cred"><strong>Agency login</strong><br><code>admin@growthos.dev</code> / <code>admin123</code></div>
+      <div class="cred"><strong>Client login</strong><br><code>client1@growthos.dev</code> / <code>client123</code></div>
+    </div>
+  </header>
+
+  <nav class="toc" aria-label="Sections">
+    <a href="#overview">1. Agency overview</a><a href="#onboarding">2. Onboard a client</a><a href="#content">3. AI drafts</a>
+    <a href="#approval">4. Client approval</a><a href="#publish">5. Publish</a><a href="#leads">6. Leads</a>
+    <a href="#search">7. SEO + GEO</a><a href="#impact">8. Impact + report</a><a href="#portal">9. Client portal</a><a href="#architecture">Architecture</a>
+  </nav>
+
+  <section class="act" id="overview">
+    <span class="eyebrow">1 · Agency overview</span>
+    <h2>Every client at a glance</h2>
+    <div class="step"><span class="num">01</span><div class="step-body">
+      <span class="role">Agency team</span>
+      <p>One sign-in page for both sides. The role decides what you see.</p>
+      <img class="shot" src="img/01-login.jpg" alt="Sign-in page" loading="lazy">
+    </div></div>
+    <div class="step"><span class="num">02</span><div class="step-body">
+      <p>The dashboard: active and onboarding clients, posts published, approvals waiting, leads and open pipeline. Each live client gets a 0-100 health score from posting cadence, growth and stuck approvals, plus a 12-week impressions trend. Below: the onboarding pipeline and a live activity feed.</p>
+      <img class="shot" src="img/02-dashboard.jpg" alt="Agency dashboard" loading="lazy">
+    </div></div>
+    <div class="step"><span class="num">03</span><div class="step-body">
+      <p>The client roster with status, health, onboarding progress, channels, account manager and posts waiting on the client.</p>
+      <img class="shot" src="img/03-clients.jpg" alt="Client roster" loading="lazy">
+    </div></div>
+  </section>
+
+  <section class="act" id="onboarding">
+    <span class="eyebrow">2 · Onboard a client</span>
+    <h2>From intake to live in five steps</h2>
+    <div class="step"><span class="num">04</span><div class="step-body">
+      <p>New client wizard, step 1: who they are, plan and account manager. Ticking “create a client login” sets up their portal access.</p>
+      <img class="shot" src="img/04-wizard-basics.jpg" alt="Wizard step 1: basics" loading="lazy">
+    </div></div>
+    <div class="step"><span class="num">05</span><div class="step-body">
+      <p>Step 2, the brand profile: positioning, voice, tone, audience, content pillars, goals and topics to avoid. Every AI prompt starts from this brief.</p>
+      <img class="shot" src="img/05-wizard-brand.jpg" alt="Wizard step 2: brand profile" loading="lazy">
+    </div></div>
+    <div class="step"><span class="num">06</span><div class="step-body">
+      <p>Step 3: channels, posting cadence and auto-approve. With auto-approve on, posts go ahead if the founder hasn't replied within 48 hours.</p>
+      <img class="shot" src="img/06-wizard-channels.jpg" alt="Wizard step 3: channels and approvals" loading="lazy">
+    </div></div>
+    <div class="step"><span class="num">07</span><div class="step-body">
+      <p>The client's login and a temporary password, shown once. Only a hash is stored.</p>
+      <img class="shot" src="img/07-client-created.jpg" alt="Client created with temporary login" loading="lazy">
+    </div></div>
+    <div class="step"><span class="num">08</span><div class="step-body">
+      <p>The five-step onboarding checklist. Completing the last step takes the client live and starts their reporting.</p>
+      <img class="shot" src="img/08-onboarding-live.jpg" alt="Onboarding checklist completed" loading="lazy">
+    </div></div>
+  </section>
+
+  <section class="act" id="content">
+    <span class="eyebrow">3 · Content and personal brand</span>
+    <h2>AI drafts in the founder's voice</h2>
+    <div class="step"><span class="num">09</span><div class="step-body">
+      <p>AI Studio suggests timely topics with the client's angle and why it matters now. “Use this topic” fills the generator; one click writes three drafts. A badge shows whether text came from a live model or the built-in templates.</p>
+      <img class="shot" src="img/09-ai-studio.jpg" alt="AI Studio with trending topics and generator" loading="lazy">
+    </div></div>
+    <div class="step"><span class="num">10</span><div class="step-body">
+      <p>The content board by status, from idea to published. AI output always lands as a draft; nothing skips review.</p>
+      <img class="shot" src="img/10-content-board.jpg" alt="Content board by status" loading="lazy">
+    </div></div>
+    <div class="step"><span class="num">11</span><div class="step-body">
+      <p>The editor: edit copy, hashtags and keyword, and see the audit trail. Buttons show only the actions allowed for this status and role.</p>
+      <img class="shot" src="img/11-draft-editor.jpg" alt="Content editor drawer" loading="lazy">
+    </div></div>
+  </section>
+
+  <section class="act" id="approval">
+    <span class="eyebrow">4 · Approval layer</span>
+    <h2>The founder approves in a minute</h2>
+    <div class="step"><span class="num">12</span><div class="step-body">
+      <span class="role client">Client</span>
+      <p>The founder's home page leads with one call to action: how many posts need approval.</p>
+      <img class="shot" src="img/12-client-home.jpg" alt="Client home with approval call to action" loading="lazy">
+    </div></div>
+    <div class="step"><span class="num">13</span><div class="step-body">
+      <p>Each post is previewed as it will look on LinkedIn or X, with Approve, Request changes, Comment and Approve all.</p>
+      <img class="shot" src="img/13-client-approvals.jpg" alt="Client approvals with post previews" loading="lazy">
+    </div></div>
+    <div class="step"><span class="num">14</span><div class="step-body">
+      <p>Requesting changes needs a note, so the team knows exactly what to fix.</p>
+      <img class="shot" src="img/14-request-changes.jpg" alt="Client requesting changes with a note" loading="lazy">
+    </div></div>
+  </section>
+
+  <section class="act" id="publish">
+    <span class="eyebrow">5 · Schedule and publish</span>
+    <h2>The team closes the loop</h2>
+    <div class="step"><span class="num">15</span><div class="step-body">
+      <span class="role">Agency team</span>
+      <p>Three queues: internal review, with the client, and changes requested, each showing how long items have waited.</p>
+      <img class="shot" src="img/15-approval-queues.jpg" alt="Approval queues" loading="lazy">
+    </div></div>
+    <div class="step"><span class="num">16</span><div class="step-body">
+      <p>After revising, the team re-sends or approves on the client's behalf, then picks a publish slot.</p>
+      <img class="shot" src="img/16-schedule.jpg" alt="Scheduling an approved post" loading="lazy">
+    </div></div>
+    <div class="step"><span class="num">17</span><div class="step-body">
+      <p>Published, with performance metrics and the full timeline: who did what, when, from which status to which, and the client's note.</p>
+      <img class="shot" src="img/17-published-timeline.jpg" alt="Published post with metrics and approval timeline" loading="lazy">
+    </div></div>
+    <div class="step"><span class="num">18</span><div class="step-body">
+      <p>The content calendar across clients, coloured by status.</p>
+      <img class="shot" src="img/26-calendar.jpg" alt="Content calendar" loading="lazy">
+    </div></div>
+  </section>
+
+  <section class="act" id="leads">
+    <span class="eyebrow">6 · Lead generation</span>
+    <h2>From post to pipeline</h2>
+    <div class="step"><span class="num">19</span><div class="step-body">
+      <p>Leads by stage with deal values, attributed to the post and campaign that produced them.</p>
+      <img class="shot" src="img/18-leads.jpg" alt="Lead pipeline board" loading="lazy">
+    </div></div>
+    <div class="step"><span class="num">20</span><div class="step-body">
+      <p>AI outreach in the founder's voice: a connection note, follow-up or meeting request, ready to copy.</p>
+      <img class="shot" src="img/19-ai-outreach.jpg" alt="Lead drawer with AI outreach message" loading="lazy">
+    </div></div>
+    <div class="step"><span class="num">21</span><div class="step-body">
+      <p>Campaigns group content and outreach around one goal, with KPI progress computed from real results.</p>
+      <img class="shot" src="img/22-campaigns.jpg" alt="Campaigns with KPI progress" loading="lazy">
+    </div></div>
+  </section>
+
+  <section class="act" id="search">
+    <span class="eyebrow">7 · Performance marketing</span>
+    <h2>Search rankings and AI-assistant visibility</h2>
+    <div class="step"><span class="num">22</span><div class="step-body">
+      <p>Keyword tracking with rank changes, plus AI keyword ideas that can be added in one click.</p>
+      <img class="shot" src="img/20-seo.jpg" alt="Keyword tracking and suggestions" loading="lazy">
+    </div></div>
+    <div class="step"><span class="num">23</span><div class="step-body">
+      <p>GEO: ask the question a buyer would ask, and see whether ChatGPT, Perplexity, Gemini and Claude name the client.</p>
+      <img class="shot" src="img/21-geo.jpg" alt="GEO visibility checks" loading="lazy">
+    </div></div>
+  </section>
+
+  <section class="act" id="impact">
+    <span class="eyebrow">8 · Impact</span>
+    <h2>Proof the work is paying off</h2>
+    <div class="step"><span class="num">24</span><div class="step-body">
+      <p>The client impact view: KPIs for the last four weeks against the four before, and weekly trends.</p>
+      <img class="shot" src="img/23-impact.jpg" alt="Client impact KPIs and trends" loading="lazy">
+    </div></div>
+    <div class="step"><span class="num">25</span><div class="step-body">
+      <p>The funnel from impressions to won deals, top posts, keyword movers and visibility by AI engine.</p>
+      <img class="shot" src="img/24-impact-funnel.jpg" alt="Funnel, top posts and keyword movers" loading="lazy">
+    </div></div>
+    <div class="step"><span class="num">26</span><div class="step-body">
+      <p>The monthly report: KPIs with deltas, an executive summary, next steps, top content, deals won and keyword movers. It prints to PDF.</p>
+      <img class="shot" src="img/25-report.jpg" alt="Monthly growth report" loading="lazy">
+    </div></div>
+  </section>
+
+  <section class="act" id="portal">
+    <span class="eyebrow">9 · Client portal</span>
+    <h2>What the founder sees</h2>
+    <div class="step"><span class="num">27</span><div class="step-body">
+      <span class="role client">Client</span>
+      <p>A live client's home: posts to approve, this month's results, what's going out next and recent leads.</p>
+      <img class="shot" src="img/27-portal-home.jpg" alt="Client portal home" loading="lazy">
+    </div></div>
+    <div class="step"><span class="num">28</span><div class="step-body">
+      <p>Their pipeline, read-only except for notes to the team.</p>
+      <img class="shot" src="img/28-portal-leads.jpg" alt="Client leads" loading="lazy">
+    </div></div>
+    <div class="step"><span class="num">29</span><div class="step-body">
+      <p>Preferences: voice, topics, things to avoid and the auto-approve window.</p>
+      <img class="shot" src="img/29-portal-preferences.jpg" alt="Client preferences" loading="lazy">
+    </div></div>
+    <div class="step"><span class="num">30</span><div class="step-body">
+      <p>Works on a phone: approvals on the go, and the team dashboard with a collapsible menu.</p>
+      <div class="pair">
+        <img class="shot" src="img/31-mobile-dashboard.jpg" alt="Team dashboard on a phone" loading="lazy" style="max-width:260px">
+        <img class="shot phone" src="img/30-mobile-approvals.jpg" alt="Client approvals on a phone" loading="lazy">
+      </div>
+    </div></div>
+  </section>
+
+  <section class="arch" id="architecture">
+    <div>
+      <span class="eyebrow">Architecture</span>
+      <h2>How Growth OS is built</h2>
+      <p class="lede" style="font-size:17px">One FastAPI service and one database behind a single React app. Every module keys off the client, so a post, its reach, the lead it produced and the deal it closed can be traced in one place.</p>
+    </div>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 980 430" role="img" aria-label="Browser apps call the FastAPI backend over REST with a JWT; the backend checks auth and access, routes to domain services and the AI layer, stores data via SQLAlchemy, and calls an AI provider only when a key is set, otherwise using templates.">
+        <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+        <g fill="none" stroke="currentColor" stroke-width="1.4" font-family="Inter, system-ui, sans-serif" font-size="13">
+          <rect x="20" y="40" width="200" height="140" rx="10"/>
+          <text x="120" y="66" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">Browser (React SPA)</text>
+          <rect x="40" y="82" width="160" height="38" rx="6"/><text x="120" y="106" text-anchor="middle" fill="currentColor" stroke="none">Team console</text>
+          <rect x="40" y="128" width="160" height="38" rx="6"/><text x="120" y="152" text-anchor="middle" fill="currentColor" stroke="none">Client portal</text>
+
+          <rect x="300" y="20" width="420" height="300" rx="12" stroke="#0f6b55" stroke-width="2"/>
+          <text x="510" y="46" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">FastAPI backend (Python)</text>
+          <rect x="320" y="62" width="380" height="40" rx="6"/><text x="510" y="87" text-anchor="middle" fill="currentColor" stroke="none">Auth: JWT + roles · client access check on every request</text>
+          <rect x="320" y="118" width="380" height="40" rx="6"/><text x="510" y="143" text-anchor="middle" fill="currentColor" stroke="none">Routers: clients · content · approvals · campaigns · leads · SEO/GEO · AI · analytics</text>
+          <rect x="320" y="176" width="180" height="70" rx="6"/>
+          <text x="410" y="200" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">Domain services</text>
+          <text x="410" y="219" text-anchor="middle" fill="currentColor" stroke="none" font-size="12">approval state machine</text>
+          <text x="410" y="235" text-anchor="middle" fill="currentColor" stroke="none" font-size="12">auto-approve · health score</text>
+          <rect x="520" y="176" width="180" height="70" rx="6"/>
+          <text x="610" y="200" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">AI layer</text>
+          <text x="610" y="219" text-anchor="middle" fill="currentColor" stroke="none" font-size="12">brand-brief prompts</text>
+          <text x="610" y="235" text-anchor="middle" fill="currentColor" stroke="none" font-size="12">JSON parsing · fallback</text>
+          <rect x="320" y="262" width="380" height="40" rx="6"/><text x="510" y="287" text-anchor="middle" fill="currentColor" stroke="none">Analytics: dashboard · impact · monthly report</text>
+
+          <rect x="350" y="360" width="320" height="50" rx="8"/><text x="510" y="390" text-anchor="middle" fill="currentColor" stroke="none">SQLite (local) · PostgreSQL (production) via SQLAlchemy</text>
+
+          <rect x="780" y="150" width="180" height="60" rx="8" stroke-dasharray="5 4"/>
+          <text x="870" y="176" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">Anthropic or OpenAI</text>
+          <text x="870" y="194" text-anchor="middle" fill="currentColor" stroke="none" font-size="12">optional</text>
+          <rect x="780" y="240" width="180" height="50" rx="8"/>
+          <text x="870" y="270" text-anchor="middle" fill="currentColor" stroke="none">Built-in templates</text>
+
+          <line x1="220" y1="110" x2="316" y2="82" marker-end="url(#ar)"/>
+          <text x="262" y="84" text-anchor="middle" fill="currentColor" stroke="none" font-size="11">REST + JWT</text>
+          <line x1="510" y1="320" x2="510" y2="356" marker-end="url(#ar)"/>
+          <text x="560" y="342" fill="currentColor" stroke="none" font-size="11">reads / writes</text>
+          <line x1="700" y1="200" x2="776" y2="182" marker-end="url(#ar)"/>
+          <text x="742" y="176" text-anchor="middle" fill="currentColor" stroke="none" font-size="11">if key set</text>
+          <line x1="700" y1="224" x2="776" y2="258" marker-end="url(#ar)"/>
+          <text x="742" y="262" text-anchor="middle" fill="currentColor" stroke="none" font-size="11">on any failure</text>
+        </g>
+      </svg>
+      <figcaption>The browser talks only to the API. Tenant isolation is enforced on the server, not in the UI. The AI layer never fails a request: without a key, or on any error, it falls back to templates built from the same brand profile.</figcaption>
+    </figure>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 980 250" role="img" aria-label="Content moves from draft to internal review to client review to approved to scheduled to published; the client can request changes, which sends it back to draft via revision; auto-approve moves client review to approved after the client's window.">
+        <defs><marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+        <g fill="none" stroke="currentColor" stroke-width="1.4" font-family="Inter, system-ui, sans-serif" font-size="13">
+          <rect x="10" y="90" width="110" height="44" rx="22"/><text x="65" y="117" text-anchor="middle" fill="currentColor" stroke="none">Draft</text>
+          <rect x="170" y="90" width="140" height="44" rx="22"/><text x="240" y="117" text-anchor="middle" fill="currentColor" stroke="none">Internal review</text>
+          <rect x="360" y="90" width="130" height="44" rx="22" stroke="#c08a2b" stroke-width="2"/><text x="425" y="117" text-anchor="middle" fill="currentColor" stroke="none">With client</text>
+          <rect x="540" y="90" width="120" height="44" rx="22"/><text x="600" y="117" text-anchor="middle" fill="currentColor" stroke="none">Approved</text>
+          <rect x="700" y="90" width="120" height="44" rx="22"/><text x="760" y="117" text-anchor="middle" fill="currentColor" stroke="none">Scheduled</text>
+          <rect x="860" y="90" width="110" height="44" rx="22" stroke="#0f6b55" stroke-width="2"/><text x="915" y="117" text-anchor="middle" fill="currentColor" stroke="none">Published</text>
+          <rect x="350" y="190" width="150" height="44" rx="22" stroke="#b42318"/><text x="425" y="217" text-anchor="middle" fill="currentColor" stroke="none">Changes requested</text>
+
+          <line x1="120" y1="112" x2="166" y2="112" marker-end="url(#ar2)"/><text x="143" y="102" text-anchor="middle" fill="currentColor" stroke="none" font-size="11">submit</text>
+          <line x1="310" y1="112" x2="356" y2="112" marker-end="url(#ar2)"/><text x="333" y="102" text-anchor="middle" fill="currentColor" stroke="none" font-size="11">send</text>
+          <line x1="490" y1="112" x2="536" y2="112" marker-end="url(#ar2)"/><text x="513" y="102" text-anchor="middle" fill="currentColor" stroke="none" font-size="11">approve</text>
+          <line x1="660" y1="112" x2="696" y2="112" marker-end="url(#ar2)"/><text x="678" y="102" text-anchor="middle" fill="currentColor" stroke="none" font-size="11">date</text>
+          <line x1="820" y1="112" x2="856" y2="112" marker-end="url(#ar2)"/><text x="838" y="102" text-anchor="middle" fill="currentColor" stroke="none" font-size="11">publish</text>
+          <path d="M65 90 C 65 30, 425 30, 425 86" marker-end="url(#ar2)" stroke-dasharray="4 4"/><text x="245" y="44" text-anchor="middle" fill="currentColor" stroke="none" font-size="11">fast path: send straight to client</text>
+          <path d="M490 104 C 520 50, 570 50, 600 86" marker-end="url(#ar2)" stroke="#c08a2b"/><text x="560" y="52" text-anchor="middle" fill="currentColor" stroke="none" font-size="11">auto-approve after N hours</text>
+          <line x1="425" y1="134" x2="425" y2="186" marker-end="url(#ar2)"/><text x="432" y="166" fill="currentColor" stroke="none" font-size="11">request changes (note required)</text>
+          <path d="M350 212 C 120 212, 65 190, 65 138" marker-end="url(#ar2)"/><text x="190" y="226" text-anchor="middle" fill="currentColor" stroke="none" font-size="11">revise</text>
+          <path d="M760 134 C 760 212, 560 212, 504 212" marker-end="url(#ar2)" stroke-dasharray="4 4"/><text x="660" y="226" text-anchor="middle" fill="currentColor" stroke="none" font-size="11">client pulls it back</text>
+        </g>
+      </svg>
+      <figcaption>The approval state machine, enforced on the server. Invalid moves return 409, the wrong role gets 403, and every step writes an audit event and an activity entry.</figcaption>
+    </figure>
+
+    <div class="grid2">
+      <div class="card"><h3>Stack</h3><p>React 19 + TypeScript + Vite, with no router or chart libraries. FastAPI, Pydantic v2 and SQLAlchemy 2.0. JWT auth with PBKDF2 password hashing.</p></div>
+      <div class="card"><h3>Data model</h3><p>Client, User, Campaign, Content, ApprovalEvent, Lead, Keyword, GEO check, weekly MetricSnapshot and Activity. Everything is scoped to the client.</p></div>
+      <div class="card"><h3>Quality</h3><p>59 backend tests (auth, tenant isolation, workflow, auto-approve, AI fallback), an end-to-end smoke test of this exact story, and CI on every push.</p></div>
+      <div class="card"><h3>Simulated for now</h3><p>Publishing to LinkedIn/X, post metrics, rank refresh and GEO for engines without a key. Each is labelled in the app and ready to swap for a real integration.</p></div>
+    </div>
+  </section>
+
+  <footer>Growth OS · <a href="https://github.com/KapilPushkar/growth-os">github.com/KapilPushkar/growth-os</a> · Demo data is fictional.</footer>
+</div>
+
+</body>
+</html>
