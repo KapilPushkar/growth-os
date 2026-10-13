@@ -2,7 +2,7 @@ import { BarList, Funnel, LineChart } from '../../../components/charts'
 import { KeywordMovers } from '../../../components/KeywordMovers'
 import { Async, Card, Empty, Kpi, SimulatedBadge, StageBadge } from '../../../components/ui'
 import { api } from '../../../lib/api'
-import { CHANNEL_LABELS, ENGINE_LABELS, date, money, num, pct } from '../../../lib/format'
+import { CHANNEL_LABELS, ENGINE_LABELS, date, money, num, pct, plural } from '../../../lib/format'
 import type { Client } from '../../../lib/types'
 import { useApi } from '../../../lib/useApi'
 
@@ -99,7 +99,7 @@ export function OverviewTab({ client }: { client: Client }) {
                 )}
               </Card>
             </div>
-            <Card title="Lead pipeline" subtitle={`${impact.leads.total} leads · ${money(impact.leads.open_value)} open · ${money(impact.leads.won_value)} won`}>
+            <Card title="Lead pipeline" subtitle={`${plural(impact.leads.total, 'lead')} · ${money(impact.leads.open_value)} open · ${money(impact.leads.won_value)} won`}>
               <div className="row wrap" style={{ gap: 12 }}>
                 {impact.leads.by_stage.map((stage) => (
                   <div key={stage.stage} className="row">

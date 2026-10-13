@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { api } from '../lib/api'
 import { isTeam, useUser } from '../lib/auth'
-import { LEAD_STAGES, SOURCE_LABELS, STAGE_META, dateTime, money, relative } from '../lib/format'
+import { LEAD_STAGES, SOURCE_LABELS, STAGE_META, dateTime, money, plural, relative } from '../lib/format'
 import { useToast } from '../lib/toast'
 import type { Client, Content, Lead, LeadSource, LeadStage, OutreachKind } from '../lib/types'
 import { useApi } from '../lib/useApi'
@@ -33,7 +33,7 @@ export function LeadsBoard({ clientId, showClient }: { clientId?: number; showCl
               <Badge tone="green" plain>
                 Won {money(pipeline.summary.won_value)}
               </Badge>
-              <span className="subtle">{pipeline.summary.total} leads</span>
+              <span className="subtle">{plural(pipeline.summary.total, 'lead')}</span>
             </div>
             {team ? (
               <Button variant="primary" onClick={() => setAdding(true)}>

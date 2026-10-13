@@ -37,7 +37,11 @@ export function ClientApprovals() {
         <div className="stack">
           <PageHeader
             eyebrow="Approvals"
-            title={queues.client_review.length ? `${queues.client_review.length} posts to review` : "You're all caught up"}
+            title={
+              queues.client_review.length
+                ? `${queues.client_review.length} post${queues.client_review.length === 1 ? '' : 's'} to review`
+                : "You're all caught up"
+            }
             description="Each post is shown as it will appear. Approve it, or tell us what to change."
             actions={
               queues.client_review.length > 1 ? (

@@ -123,6 +123,11 @@ export const KPI_LABELS: Record<string, string> = {
   meetings: 'Meetings',
 }
 
+/** "1 lead", "3 leads". */
+export function plural(count: number, word: string, pluralWord = `${word}s`): string {
+  return `${count} ${count === 1 ? word : pluralWord}`
+}
+
 export function humanize(value: string): string {
   const text = value.replace(/_/g, ' ')
   return text.charAt(0).toUpperCase() + text.slice(1)

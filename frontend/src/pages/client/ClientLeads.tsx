@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { LeadDrawer } from '../../components/Leads'
 import { Async, Badge, Card, Empty, PageHeader, StageBadge } from '../../components/ui'
 import { api } from '../../lib/api'
-import { SOURCE_LABELS, money, relative } from '../../lib/format'
+import { SOURCE_LABELS, money, plural, relative } from '../../lib/format'
 import type { Lead } from '../../lib/types'
 import { useApi } from '../../lib/useApi'
 
@@ -23,7 +23,7 @@ export function ClientLeads() {
           return (
             <Card
               bodyless
-              title={`${pipeline.summary.total} leads`}
+              title={plural(pipeline.summary.total, 'lead')}
               actions={
                 <>
                   <Badge tone="blue" plain>

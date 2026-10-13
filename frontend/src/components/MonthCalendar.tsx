@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { api } from '../lib/api'
 import { isTeam, useUser } from '../lib/auth'
-import { CHANNEL_LABELS, STATUS_META } from '../lib/format'
+import { CHANNEL_LABELS, STATUS_META, plural } from '../lib/format'
 import type { Content, ContentStatus } from '../lib/types'
 import { useApi } from '../lib/useApi'
 import { ContentEditor } from './ContentEditor'
@@ -64,7 +64,7 @@ export function MonthCalendar({ clientId }: { clientId?: number }) {
     <Card
       bodyless
       title={month.toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}
-      subtitle={`${state.data?.length ?? 0} scheduled or published pieces`}
+      subtitle={`${plural(state.data?.length ?? 0, 'piece')} scheduled or published`}
       actions={
         <>
           {team && clientId === undefined ? (

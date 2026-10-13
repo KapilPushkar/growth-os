@@ -13,7 +13,7 @@ import {
   StatusBadge,
 } from '../../../components/ui'
 import { api } from '../../../lib/api'
-import { CHANNEL_LABELS, CONTENT_STATUSES, DEFAULT_FORMAT, dateTime, humanize, relative } from '../../../lib/format'
+import { CHANNEL_LABELS, CONTENT_STATUSES, DEFAULT_FORMAT, dateTime, humanize, plural, relative } from '../../../lib/format'
 import { useToast } from '../../../lib/toast'
 import type { Channel, Client, ContentFormat, Topic } from '../../../lib/types'
 import { useApi } from '../../../lib/useApi'
@@ -33,7 +33,7 @@ export function ContentTab({ client }: { client: Client }) {
 
       <Card
         title="Content board"
-        subtitle={board.data ? `${board.data.length} pieces` : undefined}
+        subtitle={board.data ? plural(board.data.length, 'piece') : undefined}
         actions={
           <>
             <select
